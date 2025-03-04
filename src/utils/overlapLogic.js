@@ -1,5 +1,10 @@
 import { DateTime } from "luxon";
 
+/**
+ * Finds overlapping availability windows for all participants.
+ * @param {Array} participants - List of participants and their availability.
+ * @returns {Array} - Array of overlapping time slots with at least 2 participants.
+ */
 export function findOverlaps(participants) {
   let events = [];
 
@@ -12,31 +17,35 @@ export function findOverlaps(participants) {
     });
   });
 
+  // Sort events based on time
   events.sort((a, b) => a.time - b.time);
 
-  let currentParticipants = new Set();
+  let activeParticipants = new Set();
   let overlaps = [];
   let prevTime = null;
 
   for (let i = 0; i < events.length; i++) {
     let currentEvent = events[i];
 
-    if (prevTime && currentParticipants.size > 0) {
+    // If we have at least 2 participants, record this as a valid overlap
+    if (prevTime && activeParticipants.size > 1) {
       overlaps.push({
         start: prevTime,
         end: currentEvent.time,
-        participants: [...currentParticipants],
+        participants: [...activeParticipants],
       });
     }
 
+    // Update active participants
     if (currentEvent.type === "start") {
-      currentParticipants.add(currentEvent.participant);
+      activeParticipants.add(currentEvent.participant.name);
     } else {
-      currentParticipants.delete(currentEvent.participant);
+      activeParticipants.delete(currentEvent.participant.name);
     }
 
     prevTime = currentEvent.time;
   }
 
-  return overlaps;
+  // Only return overlaps with at least 2 participants
+  return overlaps.filter(slot => slot.participants.length > 1);
 }

@@ -1,23 +1,23 @@
 import React from "react";
-import { DateTime } from "luxon";
 
-function ProposedMeetings({ suggestedTimes }) {
+function ProposedMeetings({ suggestedTimes, onSelectMeeting }) {
   return (
     <div className="card p-3">
       <h4>Suggested Meeting Times</h4>
       {suggestedTimes.length === 0 ? (
-        <p>No matching time slots found.</p>
+        <p className="text-danger"><strong>No valid meeting times found. Please adjust availability.</strong></p>
       ) : (
-        suggestedTimes.map((slot, index) => {
-          const startLocal = slot.start.setZone("local").toFormat("MMMM dd, yyyy - h:mm a");
-          const endLocal = slot.end.setZone("local").toFormat("h:mm a");
-          return (
-            <div key={index} className="mb-2 p-2 border">
-              <strong>{startLocal} - {endLocal}</strong>
-              <p>{slot.participants.length} Participants Available</p>
-            </div>
-          );
-        })
+        suggestedTimes.map((slot, index) => (
+          <div 
+            key={index} 
+            className="mb-2 p-3 border bg-light meeting-slot"
+            onClick={() => onSelectMeeting(slot)} 
+            style={{ cursor: "pointer" }}
+          >
+            <strong>{slot.start.toFormat("MMMM dd, yyyy - h:mm a")} - {slot.end.toFormat("h:mm a")}</strong>
+            <p>{slot.participants.length} Participants Available</p>
+          </div>
+        ))
       )}
     </div>
   );
