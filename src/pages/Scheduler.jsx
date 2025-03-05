@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"; // ✅ Ensure useState is imported
 import ParticipantForm from "../components/ParticipantForm/ParticipantForm";
 import CalendarView from "../components/CalendarView/CalendarView";
 import ProposedMeetings from "../components/ProposedMeetings/ProposedMeetings";
@@ -8,34 +8,28 @@ function Scheduler() {
   const [participants, setParticipants] = useState([]);
   const [suggestedTimes, setSuggestedTimes] = useState([]);
   const [validMeeting, setValidMeeting] = useState(false);
-  const [selectedMeeting, setSelectedMeeting] = useState(null);
+  const [meetingLength, setMeetingLength] = useState(30); // Default to 30 mins
 
   const handleAddParticipant = (participant) => {
-    setParticipants((prevParticipants) => [...prevParticipants, participant]); // ✅ Append new participant instead of replacing
+    setParticipants((prevParticipants) => [...prevParticipants, participant]);
   };
-  
 
   const generateMeetingTimes = () => {
-    const times = findOverlaps(participants);
-    
-    // Check if there are valid meeting times
-    const hasValidOverlap = times.length > 0;
-
+    const times = findOverlaps(participants, meetingLength);
     setSuggestedTimes(times);
-    setValidMeeting(hasValidOverlap);
-  };
-
-  const handleProceedToConfirmation = (meeting) => {
-    setSelectedMeeting(meeting);
-    localStorage.setItem("selectedMeeting", JSON.stringify(meeting)); // Store in localStorage
-    window.location.href = "/confirmation"; // Navigate
+    setValidMeeting(times.length > 0);
   };
 
   return (
     <div className="scheduler-container">
       <h2>Schedule a Meeting</h2>
-      <ParticipantForm onAddParticipant={handleAddParticipant} />
+      <ParticipantForm 
+        onAddParticipant={handleAddParticipant} 
+        meetingLength={meetingLength} 
+        setMeetingLength={setMeetingLength}
+      />
       <CalendarView participants={participants} />
+
       <button className="btn btn-success mt-3" onClick={generateMeetingTimes}>
         Generate Meeting Times
       </button>
@@ -46,7 +40,7 @@ function Scheduler() {
         </div>
       )}
 
-      <ProposedMeetings suggestedTimes={suggestedTimes} onSelectMeeting={handleProceedToConfirmation} />
+      <ProposedMeetings suggestedTimes={suggestedTimes} />
     </div>
   );
 }

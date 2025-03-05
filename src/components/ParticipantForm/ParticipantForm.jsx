@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { timeZoneList } from "../../utils/timeUtils";
 
-function ParticipantForm({ onAddParticipant }) {
+function ParticipantForm({ onAddParticipant, meetingLength, setMeetingLength }) {
   const [name, setName] = useState("");
   const [timezone, setTimezone] = useState("");
   const [availabilities, setAvailabilities] = useState([{ start: "", end: "" }]);
@@ -27,27 +27,16 @@ function ParticipantForm({ onAddParticipant }) {
     });
   };
 
-  const addAvailability = () => {
-    if (availabilities.length < 10) {
-      setAvailabilities([...availabilities, { start: "", end: "" }]);
-    }
-  };
-
-  const removeAvailability = (index) => {
-    setAvailabilities(availabilities.filter((_, i) => i !== index));
-  };
-
   const handleSubmit = () => {
     if (!timezone) {
       alert("Please select a timezone");
       return;
     }
-    onAddParticipant({ name, timezone, availabilities : [...availabilities] }); 
+    onAddParticipant({ name, timezone, availabilities });
 
-    // ✅ Reset name and timezone after submission
+    // Reset fields after submission
     setName("");
     setTimezone("");
-    setAvailabilities([{ start: "", end: "" }]);
   };
 
   return (
@@ -61,12 +50,29 @@ function ParticipantForm({ onAddParticipant }) {
         maxLength={50}
         onChange={(e) => setName(e.target.value)}
       />
+
+      {/* Timezone Dropdown */}
       <select className="form-control mb-3 timezone-dropdown" value={timezone} onChange={(e) => setTimezone(e.target.value)}>
         <option value="">Select Timezone</option>
         {timeZoneList.map((tz) => (
           <option key={tz} value={tz}>{tz}</option>
         ))}
       </select>
+
+      {/* Move Meeting Length Input Below Timezone */}
+      <div className="mb-3">
+        <label className="form-label"><strong>Meeting Length (Optional - Default: 30 mins)</strong></label>
+        <input 
+          type="number" 
+          className="form-control meeting-length-input" 
+          min="15" 
+          max="120" 
+          step="15" 
+          value={meetingLength} 
+          onChange={(e) => setMeetingLength(Number(e.target.value))}
+        />
+      </div>
+
       <h6>Availability Windows:</h6>
       {availabilities.map((slot, index) => (
         <div key={index} className="d-flex mb-2">
@@ -82,10 +88,9 @@ function ParticipantForm({ onAddParticipant }) {
               <option key={time} value={time}>{time}</option>
             ))}
           </select>
-          <button className="btn btn-danger btn-sm" onClick={() => removeAvailability(index)}>X</button>
+          <button className="btn btn-danger btn-sm" onClick={() => setAvailabilities(availabilities.filter((_, i) => i !== index))}>X</button>
         </div>
       ))}
-      {availabilities.length < 10 && <button className="btn btn-secondary btn-sm mt-2" onClick={addAvailability}>+ Add Availability</button>}
       <button className="btn btn-primary mt-3" onClick={handleSubmit}>Save Changes</button>
     </div>
   );
