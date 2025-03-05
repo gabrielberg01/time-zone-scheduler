@@ -42,11 +42,12 @@ function ParticipantForm({ onAddParticipant }) {
       alert("Please select a timezone");
       return;
     }
-    onAddParticipant({ name, timezone, availabilities });
+    onAddParticipant({ name, timezone, availabilities : [...availabilities] }); 
 
     // ✅ Reset name and timezone after submission
     setName("");
     setTimezone("");
+    setAvailabilities([{ start: "", end: "" }]);
   };
 
   return (

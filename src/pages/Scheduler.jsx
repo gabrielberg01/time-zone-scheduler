@@ -11,8 +11,9 @@ function Scheduler() {
   const [selectedMeeting, setSelectedMeeting] = useState(null);
 
   const handleAddParticipant = (participant) => {
-    setParticipants([...participants, participant]);
+    setParticipants((prevParticipants) => [...prevParticipants, participant]); // ✅ Append new participant instead of replacing
   };
+  
 
   const generateMeetingTimes = () => {
     const times = findOverlaps(participants);
