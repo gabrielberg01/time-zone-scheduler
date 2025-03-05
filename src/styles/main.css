@@ -63,3 +63,28 @@ p {
 }
 
 
+/* Make dropdown text larger */
+.timezone-dropdown {
+  font-size: 1.5rem; /* Increase font size */
+  padding: 12px; /* Increase padding for better spacing */
+}
+
+/* Improve dropdown options' text size */
+.timezone-dropdown option {
+  font-size: 1.5rem; /* Make options larger */
+  padding: 10px;
+}
+
+/* Make dropdown text larger for time selection */
+.time-dropdown {
+  font-size: 1.5rem; /* Increase text size */
+  padding: 12px; /* Increase spacing */
+  width: 100%; /* Make it wider */
+}
+
+/* Make the dropdown options larger */
+.time-dropdown option {
+  font-size: 1.5rem;
+  padding: 10px;
+}
+

@@ -6,7 +6,6 @@ function ParticipantForm({ onAddParticipant }) {
   const [timezone, setTimezone] = useState("");
   const [availabilities, setAvailabilities] = useState([{ start: "", end: "" }]);
 
-  // Generate 30-minute increment time options
   const generateTimeOptions = () => {
     let times = [];
     for (let hour = 0; hour < 24; hour++) {
@@ -44,6 +43,10 @@ function ParticipantForm({ onAddParticipant }) {
       return;
     }
     onAddParticipant({ name, timezone, availabilities });
+
+    // ✅ Reset name and timezone after submission
+    setName("");
+    setTimezone("");
   };
 
   return (
