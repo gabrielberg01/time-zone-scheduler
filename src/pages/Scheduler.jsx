@@ -8,28 +8,27 @@ function Scheduler() {
   const [participants, setParticipants] = useState([]);
   const [suggestedTimes, setSuggestedTimes] = useState([]);
   const [validMeeting, setValidMeeting] = useState(false);
-  const [meetingLength, setMeetingLength] = useState(30); // Default to 30 mins
 
   const handleAddParticipant = (participant) => {
     setParticipants((prevParticipants) => [...prevParticipants, participant]);
   };
 
   const generateMeetingTimes = () => {
-    const times = findOverlaps(participants, meetingLength);
+    const times = findOverlaps(participants);
     setSuggestedTimes(times);
     setValidMeeting(times.length > 0);
+  };
+
+  const handleProceedToConfirmation = (meeting) => {
+    localStorage.setItem("selectedMeeting", JSON.stringify(meeting)); // ✅ Store the selected meeting in localStorage
+    window.location.href = "/confirmation"; // ✅ Redirect to confirmation page
   };
 
   return (
     <div className="scheduler-container">
       <h2>Schedule a Meeting</h2>
-      <ParticipantForm 
-        onAddParticipant={handleAddParticipant} 
-        meetingLength={meetingLength} 
-        setMeetingLength={setMeetingLength}
-      />
+      <ParticipantForm onAddParticipant={handleAddParticipant} />
       <CalendarView participants={participants} />
-
       <button className="btn btn-success mt-3" onClick={generateMeetingTimes}>
         Generate Meeting Times
       </button>
@@ -40,9 +39,11 @@ function Scheduler() {
         </div>
       )}
 
-      <ProposedMeetings suggestedTimes={suggestedTimes} />
+      {/* ✅ Ensure onSelectMeeting is passed */}
+      <ProposedMeetings suggestedTimes={suggestedTimes} onSelectMeeting={handleProceedToConfirmation} />
     </div>
   );
 }
+
 
 export default Scheduler;
